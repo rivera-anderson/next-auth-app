@@ -1,0 +1,142 @@
+@import "tailwindcss";
+
+/* Paleta "control de acceso": tinta índigo profunda, un único acento holográfico (el pase). */
+@theme {
+  --color-ink: #14122b;       /* fondo */
+  --color-panel: #1c1a3a;     /* superficies */
+  --color-line: #2f2b57;      /* bordes */
+  --color-paper: #ecebf7;     /* texto principal */
+  --color-mist: #9591bd;      /* texto secundario */
+  --color-alert: #ff7a7a;     /* errores / intentos usados */
+  --color-ok: #7fe6c5;        /* sesión activa */
+}
+
+/* "inline" para que las variables de next/font se resuelvan donde se usan */
+@theme inline {
+  --font-sans: var(--font-instrument), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-shoulders), var(--font-instrument), sans-serif;
+}
+
+html {
+  background: var(--color-ink);
+  color: var(--color-paper);
+  color-scheme: dark;
+}
+
+body {
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-ok);
+  outline-offset: 3px;
+}
+
+/* ---------- Campos de formulario ---------- */
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+.field label {
+  font-size: 0.875rem;
+  color: var(--color-mist);
+}
+.field input {
+  width: 100%;
+  background: var(--color-panel);
+  border: 1px solid var(--color-line);
+  border-radius: 0.6rem;
+  padding: 0.8rem 0.95rem;
+  color: var(--color-paper);
+  font-size: 1rem;
+  transition: border-color 150ms;
+}
+.field input::placeholder { color: #5f5b8a; }
+.field input:focus {
+  outline: none;
+  border-color: var(--color-paper);
+}
+
+.btn-primary {
+  width: 100%;
+  border-radius: 0.6rem;
+  padding: 0.85rem 1rem;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-weight: 600;
+  transition: transform 120ms, opacity 150ms;
+}
+.btn-primary:active { transform: scale(0.985); }
+.btn-primary:disabled { opacity: 0.5; cursor: progress; }
+
+.btn-provider {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  border-radius: 0.6rem;
+  padding: 0.8rem 1rem;
+  border: 1px solid var(--color-line);
+  color: var(--color-paper);
+  font-weight: 500;
+  transition: background-color 150ms, border-color 150ms;
+}
+.btn-provider:hover {
+  background: var(--color-panel);
+  border-color: #4a4580;
+}
+
+/* ---------- El pase de acceso (el único elemento llamativo) ---------- */
+.pass {
+  position: relative;
+  aspect-ratio: 1.586; /* proporción de una tarjeta ID-1 */
+  width: 100%;
+  border-radius: 1.1rem;
+  overflow: hidden;
+  color: var(--color-ink);
+  background:
+    linear-gradient(115deg,
+      #9fdcff 0%, #c9b2ff 22%, #ffc2e2 42%, #c3ffe9 62%, #a9c8ff 82%, #9fdcff 100%);
+  background-size: 220% 220%;
+  background-position: 0% 50%;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 30px 60px -20px rgba(0, 0, 0, 0.6);
+}
+/* textura de líneas finas, como los hologramas de seguridad */
+.pass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    -35deg,
+    rgba(20, 18, 43, 0.05) 0 1px,
+    transparent 1px 7px
+  );
+  pointer-events: none;
+}
+.pass-empty {
+  filter: saturate(0.55) brightness(0.88);
+}
+
+/* Única animación orquestada: el pase entra y su holograma se desplaza una vez */
+@keyframes pass-in {
+  from { opacity: 0; transform: translateY(24px) rotate(-6deg); }
+  to   { opacity: 1; transform: translateY(0) rotate(-3deg); }
+}
+@keyframes foil {
+  from { background-position: 0% 50%; }
+  to   { background-position: 100% 50%; }
+}
+.pass-enter {
+  transform: rotate(-3deg);
+  animation:
+    pass-in 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both,
+    foil 2400ms ease-out 200ms both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pass-enter { animation: none; }
+}
